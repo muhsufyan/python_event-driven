@@ -1,0 +1,33 @@
+# versi docker 
+version: '3.8'
+# service yg digunakan 
+services:
+# nama service backend
+  backend: 
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # port aplikasi backend kita (flask)
+    ports:
+      - 8001:5000
+    # konek ke docker container setiap waktu di workdir yaitu dir app (dg tanda .)
+    volumes:
+      - .:/app
+    # service backend app kita perlu mysql
+    depends_on:
+      - db
+  # service mysql
+  db:
+    image: mysql:5.7.22
+    # selalu restart jika container mysql stop maka akan run kembali
+    restart: always
+    environment:
+      - MYSQL_DATABASE: user
+      - MYSQL_USER: root
+      - MYSQL_PASSWORD: root
+      - MYSQL_ROOT_PASSWORD: root
+    # volume untuk menyimpan data sehingga jika container dihapus data akan tetap ada
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 3307:3306
